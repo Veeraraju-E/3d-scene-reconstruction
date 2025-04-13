@@ -96,14 +96,9 @@ This will create a GIF animation named `truck_reconstruction.gif` in the `output
 
 ### Result Animation
 
-![NeRF Reconstruction Animation](output/truck_reconstruction.gif)
-
-Animation specifications:
-
-- Format: GIF
-- Frame Rate: 10 FPS (100ms per frame)
-- Resolution: Matches the training images (default: 400x400)
-- Location: `output/truck_reconstruction.gif`
+<div align="center">
+  <img src="NeRF/output/truck_reconstruction.gif" alt="NeRF Reconstruction Animation" width="400" height="400" style="margin: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+</div>
 
 ## Implementation Details
 
