@@ -36,10 +36,10 @@ class NeRFModel(nn.Module):
             nn.ReLU(),
             nn.Linear(hidden_dim_pos, hidden_dim_pos),
             nn.ReLU(),
-            nn.Linear(hidden_dim_pos, 3 * D + 1),
+            nn.Linear(hidden_dim_pos, 3 * D + 1),   # +1 for the sigma
         )
 
-        # we need to add skip connections too
+        # for the betas
         self.block2_dir = nn.Sequential(
             nn.Linear(self.embedding_dim_dir * 6 + 3, hidden_dim_dir),    # `+3` is important
             nn.ReLU(),

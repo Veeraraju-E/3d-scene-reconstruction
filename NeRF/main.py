@@ -1,15 +1,14 @@
-import torch
-from model import NeRFModel
-from utils import ray_renderer
-import numpy as np
-import matplotlib.pyplot as plt
-from tqdm import tqdm
-from torch.utils.data import DataLoader
 import os
+import numpy as np
+from tqdm import tqdm
 from pathlib import Path
-import logging
 
-from model import Cache
+import torch
+import matplotlib.pyplot as plt
+from torch.utils.data import DataLoader
+
+from model import Cache, NeRFModel
+from utils import ray_renderer
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -70,7 +69,6 @@ def train(
         for batch in data_loader:
             ray_origins, ray_directions, pixels = batch[:, :3].to(device), batch[:, 3:6].to(device), batch[:, 6:].to(device)
 
-            # Log data samples
             # print(f"Sample ray_origins: {ray_origins[:5]}")
             # print(f"Sample ray_directions: {ray_directions[:5]}")
             # print(f"Sample pixels: {pixels[:5]}")
@@ -90,19 +88,12 @@ def train(
             loss.backward()
             optimizer.step()
             
-            # Check gradients
-            # for name, param in model.named_parameters():
-            #     if param.grad is not None:
-            #         logging.debug(f"Gradient for {name}: {param.grad.abs().mean()}")
-            #     else:
-            #         logging.debug(f"No gradient for {name}")
-
             current_loss = loss.item()
             loss_history.append(current_loss)
             epoch_loss += current_loss
             batch_count += 1
             
-            # running loss for progress bar
+            # pbar
             running_loss = epoch_loss / batch_count
             progress_bar.set_postfix({
                 'epoch': f'{epoch+1}/{num_epochs}',
@@ -113,7 +104,7 @@ def train(
 
         scheduler.step()
         
-        # Save checkpoint
+        # checkpointing
         if (epoch + 1) % checkpoint_frequency == 0:
             checkpoint = {
                 'epoch': epoch + 1,
@@ -138,7 +129,8 @@ def test(
     num_bins, 
     H, 
     W,
-    output_dir="output"
+    device,
+    output_dir="output",
 ):
     """
     Test the model to generate continuous novel views
@@ -162,7 +154,6 @@ def test(
     plt.close()
 
 def plot_loss_curve(loss_history, output_dir="output"):
-    """Plot and save the loss curve"""
     plt.figure(figsize=(10, 6))
     plt.plot(loss_history)
     plt.title('Training Loss Over Time')
@@ -217,8 +208,8 @@ if __name__ == "__main__":
             num_bins=192,
             H=400,
             W=400,
+            device=device,
             output_dir=output_dir,
         )
 
-    # plot the loss curve
-    plot_loss_curve(loss_history, output_dir='output2') 
+    plot_loss_curve(loss_history, output_dir='output') 

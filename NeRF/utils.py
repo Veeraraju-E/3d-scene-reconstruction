@@ -18,7 +18,6 @@ def get_accumulated_transmittance(alphas):
 
 def ray_renderer(model, ray_origins, ray_dirxn, hn=0, hf=0.5, num_bins=192):
     """
-    Fig 2 of the paper
     Args:
         ray_origings: 3D coordinates of the ray origins
         ray_dirxn: direction vector of the rays
